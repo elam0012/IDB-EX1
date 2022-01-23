@@ -4,7 +4,6 @@ const APP = {
     document.getElementById('movieForm').addEventListener('submit', APP.saveMovie);
   },
   setUpDB: () => {
-    //add 4 movie objects
     initDB();
     // APP.getMovies() // not ready to work yet
   },
@@ -14,31 +13,40 @@ const APP = {
     let title = document.getElementById('title').value.trim();
     if (!title) return;
     movie.title = title;
-    //check for the other two values too
-    //add the other two values to the movie object
+    let year = document.getElementById('year').value.trim();
+    if (!year) return;
+    movie.year = year;
+    let rate = document.getElementById('rate').value.trim();
+    if (!rate) return;
+    movie.rate = rate;
+    document.getElementById("movieForm").reset()
     APP.addMovie(movie);
   },
   addMovie: (movie) => {
-    //insert the new movie to the indexedDB
-  },
-  getMovies: () => {
-    //retrieve the list of movies from the database
-    //call APP.displayMovies when transaction complete
-
-    let tx = DB.transaction("movieStore")
-
+    let tx = DB.transaction("movieStore", 'readwrite')
     tx.oncomplete =  (ev) => {
       // the transaction is complete... need to do something else
     }
-
     let movieStore = tx.objectStore('movieStore');
-    let getRequest = movieStore.getAll(); // Request all teh movies
-    // get() getAll() add() delete() set() count()
+    let addRequest = movieStore.add(movie);
+    addRequest.onsuccess = (ev) => {
+      APP.getMovies()
+    }
+    addRequest.onerror = (err) = {
+      //error adding the data
+    }
+  },
+  getMovies: () => {
+    let tx = DB.transaction("movieStore")
+    tx.oncomplete =  (ev) => {
+      // the transaction is complete... need to do something else
+    }
+    let movieStore = tx.objectStore('movieStore');
+    let getRequest = movieStore.getAll(); 
     getRequest.onsuccess = (ev) => {
       let movies = ev.target.result
       APP.displayMovies(movies)
     }
-
     getRequest.onerror = (err) = {
       //error reding the data
     }
@@ -46,11 +54,11 @@ const APP = {
   displayMovies: (movies) => {
     //called when DB is opened successfully
     //also called from APP.getMovies
-
+    let list = document.getElementById("datalist")
+    list.innerHTML = null // to prevent list to expand and repeat on html body
     movies.forEach( movie => {
       let li = document.createElement("li")
       li.textContent = movie.title
-      let list = document.getElementById("datalist")
       list.append(li)
     });
   },
