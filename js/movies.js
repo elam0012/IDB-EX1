@@ -3,25 +3,25 @@ const MOVIES = [
     {
         id: Math.random().toString(36).substring(2),
         title: 'The kings men',
-        rate: '42%',
-        yaer: 2021
+        year: 2021,
+        rate: '42%'
     },
     {
         id: Math.random().toString(36).substring(2),
         title: 'Sing 2',
-        rate: '69%',
-        year: 2015
+        year: 2015,
+        rate: '69%'
     },
     {
         id: Math.random().toString(36).substring(2),
         title: 'Spider-Man',
-        rate: '93%',
-        year: 1999
+        year: 1999,
+        rate: '93%'
     },
     {
         id: Math.random().toString(36).substring(2),
         title: 'The Matrix',
-        rate: '63%',
-        year: 2005
+        year: 2005,
+        rate: '63%'
     },
 ];
