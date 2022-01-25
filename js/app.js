@@ -1,15 +1,18 @@
+import {DB, initDB} from "./idb.js"
+
 const APP = {
   init: (ev) => {
     APP.setUpDB();
     document.getElementById('movieForm').addEventListener('submit', APP.saveMovie);
   },
   setUpDB: () => {
-    initDB();
-    // APP.getMovies() // not ready to work yet
+    initDB(APP.getMovies);
   },
   saveMovie: (ev) => {
     ev.preventDefault();
     let movie = {};
+    let id = Math.random().toString(36).substring(2)
+    movie.id = id;
     let title = document.getElementById('title').value.trim();
     if (!title) return;
     movie.title = title;
@@ -47,15 +50,20 @@ const APP = {
       let movies = ev.target.result
       APP.displayMovies(movies)
     }
-    getRequest.onerror = (err) = {
+    getRequest.onerror = (err) => {
       //error reding the data
     }
   },
   displayMovies: (movies) => {
     //called when DB is opened successfully
     //also called from APP.getMovies
+    movies.sort((a, b) => {
+      if (a.title < b.title) return -1;
+      if (a.title > b.title) return 1;
+      return 0;
+    });
     let list = document.getElementById("datalist")
-    list.innerHTML = null // to prevent list to expand and repeat on html body
+    list.innerHTML = "";
     movies.forEach( movie => {
       let li = document.createElement("li")
       li.textContent = movie.title

@@ -1,6 +1,8 @@
+import MOVIES from "./movies.js"
+
 let DB = null;
 
-function initDB() {
+function initDB(callback) {
 
     let dbOpenRequest = indexedDB.open('movieDB', 1);
 
@@ -34,10 +36,10 @@ function initDB() {
             tx.oncomplete = function (ev) {
                 console.log('All movies added');
                 localStorage.setItem('movieStoreSampleDataAdded', true);
-                APP.getMovies();
+                callback()
             };
         } else {
-            APP.getMovies();
+            callback()
         }
     };
 
@@ -57,3 +59,5 @@ function initDB() {
         };
     }
 }
+
+export {DB, initDB}
