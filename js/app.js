@@ -1,6 +1,7 @@
 import {DB, initDB} from "./idb.js"
 
 const APP = {
+  movies: {},
   init: (ev) => {
     APP.setUpDB();
     document.getElementById('movieForm').addEventListener('submit', APP.saveMovie);
@@ -28,13 +29,10 @@ const APP = {
   addMovie: (movie) => {
     let tx = DB.transaction("movieStore", 'readwrite')
     tx.oncomplete =  (ev) => {
-      // the transaction is complete... need to do something else
+      APP.getMovies()
     }
     let movieStore = tx.objectStore('movieStore');
     let addRequest = movieStore.add(movie);
-    addRequest.onsuccess = (ev) => {
-      APP.getMovies()
-    }
     addRequest.onerror = (err) = {
       //error adding the data
     }
@@ -42,21 +40,18 @@ const APP = {
   getMovies: () => {
     let tx = DB.transaction("movieStore")
     tx.oncomplete =  (ev) => {
-      // the transaction is complete... need to do something else
+      APP.displayMovies(APP.movies)
     }
     let movieStore = tx.objectStore('movieStore');
     let getRequest = movieStore.getAll(); 
     getRequest.onsuccess = (ev) => {
-      let movies = ev.target.result
-      APP.displayMovies(movies)
+      APP.movies = ev.target.result
     }
     getRequest.onerror = (err) => {
       //error reding the data
     }
   },
   displayMovies: (movies) => {
-    //called when DB is opened successfully
-    //also called from APP.getMovies
     movies.sort((a, b) => {
       if (a.title < b.title) return -1;
       if (a.title > b.title) return 1;
